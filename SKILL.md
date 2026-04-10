@@ -87,6 +87,36 @@ User mentions a token
 
 ## How to present findings
 
+Format output to match the Pellet CLI style — clean, terminal-native, scannable:
+
+```
+PELLET
+token intelligence on Base
+
+  AERO Aerodrome
+  0x940181a94A35A4569E4529A3CDfB74e38FD98631
+
+  price        $0.38
+  mcap         $348.0M
+  liquidity    $2.9M
+  volume 24h   $95.1K
+  buys/sells   1 / 54 (1h)
+  change       -0.1% 1h  +7.2% 24h
+
+  signals
+  ✓ verified contract
+  ⚠ owner active
+  ✗ mint function
+  ✗ proxy/upgradeable contract
+
+  ───────────────────────────────────
+  Verified contract. Owner has NOT renounced. Risk score: 45/100.
+
+  --contract $0.02   --analyze $0.05
+```
+
+Use this exact layout: left-aligned dim labels, right-aligned values, ✓/⚠/✗ for flags. For full briefings, use numbered sections: `01 — IDENTITY`, `02 — HONEYPOT`, `03 — CONTRACT`, `04 — SUPPLY`, `05 — HOLDERS`, `06 — LIQUIDITY`, `07 — CREATOR`, `08 — ASSAY`.
+
 **Be a neutral source, not an advisor.** Present findings as sourced facts. Say "the deployer was funded from Coinbase in 2 hops" not "this token is safe."
 
 **Surface the most important finding first.** If the deployer was funded from a mixer, lead with that. If the LP is in a custom lock contract, say that before the holder distribution. Prioritize what would change the user's decision.
@@ -97,20 +127,48 @@ User mentions a token
 
 **Never use verdict language.** Don't say SAFE, RISKY, DANGEROUS. Present context. The user draws conclusions.
 
+## Wallet setup (shown after every lookup when no wallet is configured)
+
+The Pellet MCP response includes a `_wallet` field. When `_wallet.status` is `"none"`, **always** show the wallet prompt at the bottom of your response after the token data:
+
+```
+  ───────────────────────────────────
+  To unlock full briefings ($0.05 per call):
+
+    1. Create a Pellet wallet
+       Say "create wallet" — I'll generate one instantly.
+       Fund it with a few dollars of USDC on Base.
+
+    2. Connect existing wallet
+       → pelletfi.com/connect
+
+    3. Pellet Pro ($49/mo, 10k calls)
+       → pelletfi.com/pro
+```
+
+When `_wallet.status` is `"connected"`, show the upsell without the wallet setup:
+```
+  --contract $0.02   --analyze $0.05
+```
+
+If the user says "create wallet", call the `create_wallet` tool.
+
 ## Setup
 
 ```bash
-# Free tools only
+# Just install — wallet is created automatically on first paid call
 claude mcp add pellet -- npx -y @pelletfi/mcp
-
-# Per-call x402 payments (paid tools)
-claude mcp add pellet -e EVM_PRIVATE_KEY=0x... -- npx -y @pelletfi/mcp
-
-# Pellet Pro ($49/mo, 10k calls)
-claude mcp add pellet -e PELLET_KEY=pellet_pro_... -- npx -y @pelletfi/mcp
 ```
 
-Pro key at [pelletfi.com/pro](https://pelletfi.com/pro).
+Or bring your own wallet:
+```bash
+claude mcp add pellet -e EVM_PRIVATE_KEY=0x... -- npx -y @pelletfi/mcp
+```
+
+Or use Pellet Pro ($49/mo): [pelletfi.com/pro](https://pelletfi.com/pro)
+```bash
+claude mcp add pellet -e PELLET_KEY=pellet_pro_... -- npx -y @pelletfi/mcp
+```
 
 ## Boundaries
 
