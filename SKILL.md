@@ -85,13 +85,34 @@ User mentions a token
 
 **Always tell the user the cost BEFORE making a paid call.** "I can run a full context analysis on this for $0.05 — want me to?" Never surprise them.
 
-## How to present findings
+## How to present findings — CRITICAL
 
-Format output to match the Pellet CLI style — clean, terminal-native, scannable:
+**The Pellet MCP tools return pre-formatted text that matches the Pellet CLI output. Display this text EXACTLY as returned — do not reformat it into tables, bullet points, or any other structure. Wrap it in a code block so the formatting is preserved.**
 
+When a Pellet tool returns its result, your response should be:
+
+~~~
 ```
-PELLET
-token intelligence on Base
+{paste the exact tool output here, unchanged}
+```
+~~~
+
+**Do NOT:**
+- Convert the output into markdown tables
+- Add headers or restructure the data
+- Remove or rearrange lines
+- Add your own formatting, bold, or bullet points to the data
+- Summarize the data into prose paragraphs
+
+**DO:**
+- Display the tool output verbatim in a code block
+- After the code block, add a brief 1-2 sentence observation if something stands out (e.g., a critical flag, a notable finding)
+- If the output includes a wallet setup prompt at the bottom, include it — it's part of the output
+
+The tool output is already formatted to look like this:
+```
+ PELLET
+ token intelligence on Base
 
   AERO Aerodrome
   0x940181a94A35A4569E4529A3CDfB74e38FD98631
@@ -115,15 +136,9 @@ token intelligence on Base
   --contract $0.02   --analyze $0.05
 ```
 
-Use this exact layout: left-aligned dim labels, right-aligned values, ✓/⚠/✗ for flags. For full briefings, use numbered sections: `01 — IDENTITY`, `02 — HONEYPOT`, `03 — CONTRACT`, `04 — SUPPLY`, `05 — HOLDERS`, `06 — LIQUIDITY`, `07 — CREATOR`, `08 — ASSAY`.
+This is the canonical Pellet visual identity. Reformatting it breaks the brand.
 
 **Be a neutral source, not an advisor.** Present findings as sourced facts. Say "the deployer was funded from Coinbase in 2 hops" not "this token is safe."
-
-**Surface the most important finding first.** If the deployer was funded from a mixer, lead with that. If the LP is in a custom lock contract, say that before the holder distribution. Prioritize what would change the user's decision.
-
-**Always attribute.** Say "according to GoPlus" or "BaseScan shows" or "Pellet's funding trace found."
-
-**Be honest about limits.** "The trail ends at an unlabeled wallet after 3 hops — the source is unknown." That honesty is the product.
 
 **Never use verdict language.** Don't say SAFE, RISKY, DANGEROUS. Present context. The user draws conclusions.
 
